@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CS Test - AI College Helpdesk</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <!-- Header -->
+        <div class="chat-header">
+            <div>
+                <h2>📝 Computer Science Test</h2>
+                <p>Test your Computer Science knowledge</p>
+            </div>
+            <a href="/chat" class="home-btn">🤖 AI Chat</a>
+        </div>
+
+        <!-- Test Introduction -->
+        <div class="college-info" id="introSection">
+            <h3>🎯 CS Knowledge Test</h3>
+            <p>
+                Test your knowledge in Python, Java, RDBMS,
+                Software Engineering and Computer Basics.
+            </p>
+            <br>
+            <button class="start-btn" onclick="startTest()">
+                Start Test 🚀
+            </button>
+        </div>
+
+        <!-- Questions / Result -->
+        <div id="testArea"></div>
+
+    </div>
+
+    <script>
+
+        /* =========================================================
+           SUBJECT SETUP
+           Icons for display, and a simple subject -> topic map used
+           for the "Recommended Next Step" section.
+        ========================================================= */
+
+        const SUBJECT_ICONS = {
+            "Python": "🐍",
+            "Java": "☕",
+            "RDBMS": "🗄️",
+            "Software Engineering": "⚙️",
+            "Computer Basics": "💻"
+        };
+
+        const NEXT_STEPS = {
+            "Python": "Practice Python functions, loops and list operations.",
+            "Java": "Practice Java classes, inheritance and OOP concepts.",
+            "RDBMS": "Practice SQL queries like SELECT, JOIN and WHERE clauses.",
+            "Software Engineering": "Revise the SDLC phases and software testing basics.",
+            "Computer Basics": "Revise computer fundamentals, hardware terms and HTML basics."
+        };
+
+
+        /* =========================================================
+           QUESTIONS (10 questions, 2 per subject)
+        ========================================================= */
+
+        const questions = [
+            { question: "Which keyword is used to define a function in Python?",
+              options: ["function", "def", "fun", "define"],
+              answer: "def", subject: "Python" },
+
+            { question: "Which symbol is used for comments in Python?",
+              options: ["//", "#", "/* */", "<!-- -->"],
+              answer: "#", subject: "Python" },
+
+            { question: "Which keyword is used to create a class in Java?",
+              options: ["class", "struct", "define", "object"],
+              answer: "class", subject: "Java" },
+
+            { question: "Which concept allows a class to acquire properties of another class?",
+              options: ["Encapsulation", "Inheritance", "Compilation", "Iteration"],
+              answer: "Inheritance", subject: "Java" },
+
+            { question: "Which command is used to retrieve data from a database?",
+              options: ["INSERT", "UPDATE", "SELECT", "DELETE"],
+              answer: "SELECT", subject: "RDBMS" },
+
+            { question: "What does SQL stand for?",
+              options: ["Structured Query Language", "Simple Query Language",
+                        "System Query Language", "Structured Question Language"],
+              answer: "Structured Query Language", subject: "RDBMS" },
+
+            { question: "Which phase comes first in the Software Development Life Cycle?",
+              options: ["Testing", "Maintenance", "Requirement Analysis", "Deployment"],
+              answer: "Requirement Analysis", subject: "Software Engineering" },
+
+            { question: "Which process is used to find and fix errors in software?",
+              options: ["Testing", "Designing", "Planning", "Deployment"],
+              answer: "Testing", subject: "Software Engineering" },
+
+            { question: "Which language is commonly used for web page structure?",
+              options: ["Python", "HTML", "Java", "SQL"],
+              answer: "HTML", subject: "Computer Basics" },
+
+            { question: "What does CPU stand for?",
+              options: ["Central Processing Unit", "Computer Processing Unit",
+                        "Central Program Unit", "Computer Program Utility"],
+              answer: "Central Processing Unit", subject: "Computer Basics" }
+        ];
+
+
+        /* =========================================================
+           TEST STATE
+        ========================================================= */
+
+        let currentQuestion = 0;
+        let score = 0;
+        let locked = false;          // stops double-clicking one option
+        let subjectScores = {};
+
+
+        // Some options contain HTML symbols like <!-- --> .
+        // Escaping keeps them visible instead of being read as HTML.
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+
+        function resetSubjectScores() {
+            subjectScores = {};
+            for (const key in SUBJECT_ICONS) {
+                subjectScores[key] = { correct: 0, total: 0 };
+            }
+        }
+
+
+        function startTest() {
+            document.getElementById("introSection").style.display = "none";
+            currentQuestion = 0;
+            score = 0;
+            locked = false;
+            resetSubjectScores();
+            showQuestion();
+        }
+
+
+        /* =========================================================
+           QUESTION SCREEN
+        ========================================================= */
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const progressPercent =
+                Math.round((currentQuestion / questions.length) * 100);
+
+            let html = `
+                <div class="question-card fade-in">
+
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width:${progressPercent}%"></div>
+                    </div>
+                    <p class="progress-label">Question ${currentQuestion + 1} of ${questions.length}</p>
+
+                    <span class="subject-badge">${SUBJECT_ICONS[q.subject]} ${q.subject}</span>
+
+                    <h2 class="question-text">${q.question}</h2>
+
+                    <div class="option-list" id="optionList">
+            `;
+
+            // Options are passed by INDEX, so quotes and HTML symbols
+            // inside an option can never break the button.
+            q.options.forEach(function (option, index) {
+                html += `
+                    <button class="option-btn" onclick="checkAnswer(${index}, this)">
+                        ${escapeHtml(option)}
+                    </button>
+                `;
+            });
+
+            html += `</div></div>`;
+
+            document.getElementById("testArea").innerHTML = html;
+            locked = false;
+        }
+
+
+        function checkAnswer(selectedIndex, btnEl) {
+            if (locked) return;
+            locked = true;
+
+            const q = questions[currentQuestion];
+            const selectedAnswer = q.options[selectedIndex];
+            const correctIndex = q.options.indexOf(q.answer);
+
+            subjectScores[q.subject].total++;
+
+            const allButtons = document.querySelectorAll("#optionList .option-btn");
+            allButtons.forEach(b => b.disabled = true);
+
+            if (selectedAnswer === q.answer) {
+                score++;
+                subjectScores[q.subject].correct++;
+                btnEl.classList.add("option-correct");
+            } else {
+                btnEl.classList.add("option-wrong");
+                if (correctIndex > -1 && allButtons[correctIndex]) {
+                    allButtons[correctIndex].classList.add("option-correct");
+                }
+            }
+
+            currentQuestion++;
+
+            setTimeout(function () {
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 650);
+        }
+
+
+        /* =========================================================
+           SMALL HELPERS
+        ========================================================= */
+
+        // Counts a number up from 0 for a smooth entrance effect.
+        function animateCount(elementId, target, suffix) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            if (target <= 0) {
+                el.textContent = 0 + (suffix || "");
+                return;
+            }
+
+            let current = 0;
+            const step = Math.max(1, Math.round(target / 20));
+
+            const timer = setInterval(function () {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = current + (suffix || "");
+            }, 35);
+        }
+
+
+        // Performance level based on overall percentage.
+        function getLevel(percentage) {
+            if (percentage >= 90) return { icon: "🏆", text: "Excellent Performance" };
+            if (percentage >= 75) return { icon: "⭐", text: "Very Good Performance" };
+            if (percentage >= 50) return { icon: "👍", text: "Good Start" };
+            return { icon: "📚", text: "Needs More Practice" };
+        }
+
+
+        // Builds the insight sentence from the actual subject results.
+        function buildInsight(percentage, stats) {
+            const good = stats.filter(s => s.pct >= 75).map(s => s.subject);
+            const low  = stats.filter(s => s.pct < 75).map(s => s.subject);
+
+            let opening;
+            if (percentage >= 75) {
+                opening = "Your overall performance is strong.";
+            } else if (percentage >= 50) {
+                opening = "Your overall performance is steady and improving.";
+            } else {
+                opening = "You have made a start and there is clear room to grow.";
+            }
+
+            let strongPart = "";
+            if (good.length > 0) {
+                strongPart = ` You performed best in <strong>${good.join(", ")}</strong>.`;
+            }
+
+            let improvePart;
+            if (low.length > 0) {
+                improvePart = ` Focus more on <strong>${low.join(", ")}</strong> to improve your overall score.`;
+            } else {
+                improvePart = " You answered every subject confidently — try a harder set next.";
+            }
+
+            return opening + strongPart + improvePart;
+        }
+
+
+        /* =========================================================
+           RESULT DASHBOARD
+        ========================================================= */
+
+        function showResult() {
+            const percentage = Math.round((score / questions.length) * 100);
+            const level = getLevel(percentage);
+
+            // Build a stats list from the real subjectScores object.
+            const stats = [];
+            for (const subject in subjectScores) {
+                const data = subjectScores[subject];
+                if (data.total === 0) continue;
+                stats.push({
+                    subject: subject,
+                    correct: data.correct,
+                    total: data.total,
+                    pct: Math.round((data.correct / data.total) * 100)
+                });
+            }
+
+            // Strongest and weakest subjects (never hardcoded).
+            let strong = stats[0];
+            let weak = stats[0];
+            stats.forEach(function (s) {
+                if (s.pct > strong.pct) strong = s;
+                if (s.pct < weak.pct) weak = s;
+            });
+
+            // Chart rows, sorted high to low so the chart reads clearly.
+            const sorted = stats.slice().sort((a, b) => b.pct - a.pct);
+
+            let chartRows = "";
+            sorted.forEach(function (s, i) {
+                chartRows += `
+                    <div class="chart-row">
+                        <div class="chart-label">
+                            <span>${SUBJECT_ICONS[s.subject]}</span> ${s.subject}
+                        </div>
+                        <div class="chart-track">
+                            <div class="chart-bar" data-width="${s.pct}" style="width:0%; transition-delay:${i * 0.12}s"></div>
+                        </div>
+                        <div class="chart-value">${s.correct}/${s.total} &middot; ${s.pct}%</div>
+                    </div>
+                `;
+            });
+
+            // Compact subject cards.
+            let subjectCards = "";
+            stats.forEach(function (s, i) {
+                subjectCards += `
+                    <div class="subject-card">
+                        <div class="subject-card-top">
+                            <span class="subject-icon">${SUBJECT_ICONS[s.subject]}</span>
+                            <span class="subject-name">${s.subject}</span>
+                        </div>
+                        <div class="subject-bar-track">
+                            <div class="subject-bar-fill" data-width="${s.pct}" style="width:0%; transition-delay:${i * 0.08}s"></div>
+                        </div>
+                        <div class="subject-card-bottom">
+                            <span>${s.correct} / ${s.total}</span>
+                            <strong>${s.pct}%</strong>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Donut ring geometry (radius 52 -> circumference ~326.7).
+            const CIRCUMFERENCE = 326.7;
+            const offset = CIRCUMFERENCE * (1 - percentage / 100);
+
+            const insightText = buildInsight(percentage, stats);
+            const nextStep = NEXT_STEPS[weak.subject];
+
+            document.getElementById("testArea").innerHTML = `
+
+                <div class="dashboard fade-in">
+
+                    <div class="dashboard-header">
+                        <h2>📊 Student Performance Dashboard</h2>
+                        <p>Understand your strengths. Improve your skills.</p>
+                    </div>
+
+                    <!-- Score hero with donut ring -->
+                    <div class="score-hero">
+
+                        <div class="score-ring">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+                                <circle id="ringProgress" class="ring-fg" cx="60" cy="60" r="52"
+                                        stroke-dasharray="${CIRCUMFERENCE}"
+                                        stroke-dashoffset="${CIRCUMFERENCE}"></circle>
+                            </svg>
+                            <div class="ring-center">
+                                <span id="ringPct">0%</span>
+                                <small>accuracy</small>
+                            </div>
+                        </div>
+
+                        <div class="score-hero-text">
+                            <p class="score-hero-tag">🎉 Test Completed</p>
+                            <h1 id="scoreCounter">0/${questions.length}</h1>
+                            <span class="level-chip">${level.icon} ${level.text}</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Analytics summary cards -->
+                    <div class="summary-row">
+                        <div class="summary-card">
+                            <p class="summary-label">Overall Score</p>
+                            <h3 id="overallScore">0</h3>
+                        </div>
+                        <div class="summary-card">
+                            <p class="summary-label">Accuracy</p>
+                            <h3 id="overallPct">0%</h3>
+                        </div>
+                        <div class="summary-card">
+                            <p class="summary-label">Subjects Analyzed</p>
+                            <h3>${stats.length}</h3>
+                        </div>
+                    </div>
+
+                    <!-- Comparison chart -->
+                    <h3 class="section-title">📈 Subject Comparison</h3>
+                    <div class="chart-panel">
+                        ${chartRows}
+                    </div>
+
+                    <!-- Subject cards -->
+                    <h3 class="section-title">📚 Subject Analysis</h3>
+                    <div class="subject-grid">
+                        ${subjectCards}
+                    </div>
+
+                    <!-- Strong / weak -->
+                    <div class="analysis-row">
+
+                        <div class="analysis-card strong-card">
+                            <p class="analysis-tag">💪 Strong Area</p>
+                            <h2>${SUBJECT_ICONS[strong.subject]} ${strong.subject}</h2>
+                            <span class="analysis-pct">${strong.pct}%</span>
+                            <p class="analysis-note">Your strongest performance was in ${strong.subject}.</p>
+                        </div>
+
+                        <div class="analysis-card weak-card">
+                            <p class="analysis-tag">📈 Needs Improvement</p>
+                            <h2>${SUBJECT_ICONS[weak.subject]} ${weak.subject}</h2>
+                            <span class="analysis-pct">${weak.pct}%</span>
+                            <p class="analysis-note">More practice in ${weak.subject} can improve your overall performance.</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Insight -->
+                    <div class="insight-box">
+                        <h3>💡 Performance Insight</h3>
+                        <p>${insightText}</p>
+                    </div>
+
+                    <!-- Next step -->
+                    <div class="nextstep-box">
+                        <h3>🎯 Recommended Next Step</h3>
+                        <p>${nextStep}</p>
+                    </div>
+
+                    <div class="retake-wrap">
+                        <button class="start-btn" onclick="location.reload()">
+                            🔄 Retake Test
+                        </button>
+                    </div>
+
+                </div>
+            `;
+
+            // Trigger the animations after the DOM is painted.
+            requestAnimationFrame(function () {
+                document.getElementById("ringProgress").style.strokeDashoffset = offset;
+
+                document.querySelectorAll(".chart-bar, .subject-bar-fill")
+                    .forEach(function (bar) {
+                        bar.style.width = bar.getAttribute("data-width") + "%";
+                    });
+            });
+
+            animateCount("scoreCounter", score, `/${questions.length}`);
+            animateCount("overallScore", score, `/${questions.length}`);
+            animateCount("overallPct", percentage, "%");
+            animateCount("ringPct", percentage, "%");
+        }
+
+    </script>
+
+</body>
+</html>

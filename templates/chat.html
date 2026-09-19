@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI College Helpdesk - Chat</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <!-- Header -->
+        <div class="chat-header">
+            <div>
+                <h2>🎓 AI College Helpdesk</h2>
+                <p>Just Ask. Get the Answer.</p>
+            </div>
+
+            <a href="/" class="home-btn">🏠 Home</a>
+        </div>
+
+
+        <!-- Quick Questions -->
+        <div class="quick-section">
+
+            <h3>Quick Questions</h3>
+
+            <div class="quick-buttons">
+                <button>📝 Exam</button>
+                <button>💰 Scholarship</button>
+                <button>📚 Library</button>
+                <button>🗂️ Admission</button>
+                <button>🗓️ Timetable</button>
+                <button>💻 Python</button>
+            </div>
+        </div>
+
+        <div class="college-info test-cta">
+            <h3>📝 Computer Science Test</h3>
+            <p>Test your Computer Science knowledge and analyze your performance.</p>
+            <br>
+            <a href="/test" class="start-btn">Take CS Test 🚀</a>
+        </div>
+
+        <!-- College Information -->
+        <div class="college-info">
+
+            <h3>🏛️ College Information</h3>
+
+            <div class="info-cards">
+
+                <div class="info-card">
+                    <span>🏛️</span>
+                    <div>
+                        <strong>College</strong>
+                        <p>Chalisgaon Education Society's B.P.Arts, S.M.A.Science & K.K.C.Commerce College Chalisgaon</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span>💻</span>
+                    <div>
+                        <strong>Department</strong>
+                        <p>Department of Computer Science</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span>🕒</span>
+                    <div>
+                        <strong>Library Timing</strong>
+                        <p>7:30 AM to 12:00 PM</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span>👨‍🏫</span>
+                    <div>
+                        <strong>HOD</strong>
+                        <p>Dr. M. V. Bildikar Sir</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <span>🌐</span>
+                    <div>
+                        <strong>Official Website</strong>
+                        <p>cesasc.ac.in</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chat Area -->
+        <div class="chat-box" id="chatBox">
+
+            <div class="message bot-message">
+                <strong>🤖 AI Helpdesk:</strong>
+                <p>Hello! 👋 How can I help you with your college information?</p>
+            </div>
+
+        </div>
+
+
+        <!-- Input Area -->
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="userInput"
+                placeholder="Ask your college-related question..."
+            >
+
+            <button id="voiceBtn" title="Speak your question">
+                🎤
+            </button>
+
+            <button id="sendBtn">
+                Send ➤
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

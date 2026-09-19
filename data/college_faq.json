@@ -1,0 +1,102 @@
+{
+    "exam": [
+        {
+            "question": "Exam form कधी भरायचा?",
+            "answer": "Exam form ची तारीख department किंवा college notice द्वारे जाहीर केली जाते."
+        },
+        {
+            "question": "Exam timetable कुठे मिळेल?",
+            "answer": "Exam timetable college notice board किंवा official college portal वर उपलब्ध होईल."
+        }
+    ],
+
+    "scholarship": [
+        {
+            "question": "Scholarship साठी कोणते documents लागतात?",
+            "answer": "Scholarship नुसार documents वेगवेगळे असू शकतात. सामान्यतः Aadhaar Card, Bank Passbook, Income Certificate आणि previous marksheet आवश्यक असू शकतात."
+        },
+        {
+            "question": "Scholarship form कुठे भरायचा?",
+            "answer": "Scholarship form संबंधित scholarship portal वर online भरावा लागतो."
+        }
+    ],
+
+    "library": [
+        {
+            "question": "Library ची वेळ काय आहे?",
+            "answer": "The college library timing is 7:30 AM to 12:00 PM."
+        },
+        {
+            "question": "Library मध्ये किती books issue करता येतात?",
+            "answer": "Books issue करण्याची संख्या college library rules नुसार ठरवली जाते."
+        }
+    ],
+
+    "admission": [
+        {
+            "question": "Admission साठी कोणते documents लागतात?",
+            "answer": "Admission साठी सामान्यतः marksheet, Aadhaar Card, photographs आणि आवश्यक certificates लागतात."
+        }
+    ],
+    "timetable": [
+    {
+        "question": "What is the T.Y. B.Sc. Computer Science timetable?",
+        "answer": "The T.Y. B.Sc. Computer Science timetable is effective from 01 July 2026 for Academic Year 2026-27."
+    },
+    {
+        "question": "What is the Monday timetable?",
+        "answer": "Monday: 07:30 AM - CS 315: Theoretical Computer Science; 08:30 AM - CS 314: RDBMS; 09:45 AM - CS 312: Python; 10:45 AM - CS 317: Java Programming Lab."
+    },
+    {
+        "question": "What is the Tuesday timetable?",
+        "answer": "Tuesday: 07:30 AM - CS 315: Theoretical Computer Science; 08:30 AM - CS 314: RDBMS; 09:45 AM - CS 312: Python; 10:45 AM - CS 317: Java Programming Lab."
+    },
+    {
+        "question": "What is the Wednesday timetable?",
+        "answer": "Wednesday: 07:30 AM - CS 318(C): Introduction to Data Science; 08:30 AM - CS 320: Application based Software Tools; 09:45 AM - CS 316 Lab; 10:45 AM - CS 316 Lab."
+    },
+    {
+        "question": "What is the Thursday timetable?",
+        "answer": "Thursday: 07:30 AM - CS 318(C): Introduction to Data Science; 08:30 AM - CS 320: Application based Software Tools; 09:45 AM - CS 316 Lab; 10:45 AM - CS 316 Lab."
+    },
+    {
+        "question": "What is the Friday timetable?",
+        "answer": "Friday: 07:30 AM - CS 313: Java Programming-I; 08:30 AM - CS 311: Software Engineering; 09:45 AM - CS 310(A): Field Project; 10:45 AM - CS 319(C): Lab."
+    },
+    {
+        "question": "What is the Saturday timetable?",
+        "answer": "Saturday: 07:30 AM - CS 313: Java Programming-I; 08:30 AM - CS 311: Software Engineering; 09:45 AM - CS 310(A): Field Project; 10:45 AM - CS 319(C): Lab."
+    },
+    {
+        "question": "When is the Python lecture?",
+        "answer": "Python (CS 312) is scheduled at 09:45 AM on Monday and Tuesday."
+    },
+    {
+        "question": "When is RDBMS?",
+        "answer": "RDBMS (CS 314) is scheduled at 08:30 AM on Monday and Tuesday."
+    },
+    {
+        "question": "When is Software Engineering?",
+        "answer": "Software Engineering (CS 311) is scheduled at 08:30 AM on Friday and Saturday."
+    },
+    {
+        "question": "When is Java Programming?",
+        "answer": "Java Programming-I (CS 313) is scheduled at 07:30 AM on Friday and Saturday."
+    }
+],
+
+    "college_info": [
+    {
+        "question": "What are the library timings?",
+        "answer": "The college library timing is 7:30 AM to 12:00 PM."
+    },
+    {
+        "question": "What is the college website?",
+        "answer": "The official college website is available at cesasc.ac.in."
+    },
+    {
+        "question": "Who is the HOD of the Computer Department?",
+        "answer": "The HOD of the Computer Department is Dr. M. V. Bildikar Sir."
+    }
+]
+}
